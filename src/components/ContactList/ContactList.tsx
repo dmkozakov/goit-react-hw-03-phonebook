@@ -1,8 +1,14 @@
-import PropTypes from 'prop-types';
 import { ContactName } from './ContactName.styled';
 import { ContactsList } from './ContactList.styled';
+import { MouseEvent } from 'react';
+import { IContact } from 'interfaces/IContact';
 
-export const ContactList = ({ filteredContacts, onRemoveContact }) => {
+interface Props {
+  filteredContacts: IContact[];
+  onRemoveContact: (e: MouseEvent<HTMLButtonElement>) => void;
+}
+
+export const ContactList = ({ filteredContacts, onRemoveContact }: Props) => {
   return (
     <ContactsList>
       {filteredContacts.map(({ id, name, number }) => {
@@ -19,14 +25,4 @@ export const ContactList = ({ filteredContacts, onRemoveContact }) => {
       })}
     </ContactsList>
   );
-};
-
-ContactList.propTypes = {
-  filteredContacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ),
 };

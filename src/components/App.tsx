@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { ChangeEvent, Component, MouseEvent } from 'react';
 import { nanoid } from 'nanoid';
 import { ContactForm } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
@@ -6,6 +6,13 @@ import { ContactList } from './ContactList/ContactList';
 import { Container } from './Container.styled';
 import { ContactFormSection } from './ContactForm/ContactFormSection.styled';
 import { ContactListSection } from './ContactList/ContactListSection.styled';
+import { IContact } from 'interfaces/IContact';
+import { IFormValues } from 'interfaces/IFormValues';
+
+interface State {
+  contacts: IContact[];
+  filter: string;
+}
 
 const KEY = 'contacts';
 
@@ -17,31 +24,35 @@ export class App extends Component {
   state = { ...INITIAL_STATE };
 
   componentDidMount() {
-    const contacts = JSON.parse(localStorage.getItem(KEY));
+    const storageKey = localStorage.getItem(KEY);
 
-    if (contacts) {
-      this.setState({ contacts });
+    if (typeof storageKey === 'string') {
+      const contacts = JSON.parse(storageKey);
+
+      if (contacts) {
+        this.setState({ contacts });
+      }
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: State, prevState: State) {
     if (this.state.contacts !== prevState.contacts) {
       localStorage.setItem(KEY, JSON.stringify(this.state.contacts));
     }
   }
 
-  changeFilter = e => {
+  changeFilter = (e: ChangeEvent<HTMLInputElement>) => {
     this.setState({ filter: e.target.value.toLowerCase() });
   };
 
-  formSubmitHandler = ({ name, number }) => {
-    const contact = {
+  formSubmitHandler = ({ name, number }: IFormValues) => {
+    const contact: IContact = {
       id: nanoid(),
       name,
       number,
     };
 
-    this.setState(prevState => ({
+    this.setState((prevState: State) => ({
       contacts: [contact, ...prevState.contacts],
     }));
   };
@@ -49,14 +60,15 @@ export class App extends Component {
   getFilteredContacts = () => {
     const { contacts, filter } = this.state;
 
-    return contacts.filter(contact =>
+    return contacts.filter((contact: IContact) =>
       contact.name.toLowerCase().includes(filter)
     );
   };
 
-  removeContact = e => {
+  removeContact = (e: MouseEvent<HTMLButtonElement>) => {
     const updatedContacts = this.state.contacts.filter(
-      contact => contact.id !== e.target.dataset.id
+      (contact: IContact) =>
+        contact.id !== (e.target as HTMLInputElement).dataset.id
     );
 
     this.setState({ contacts: updatedContacts });

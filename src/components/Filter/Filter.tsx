@@ -1,6 +1,12 @@
 import PropTypes from 'prop-types';
+import { ChangeEvent } from 'react';
 
-export const Filter = ({ filter, changeFilter }) => {
+interface FilterProps {
+  filter: string;
+  changeFilter: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+
+export const Filter = ({ filter, changeFilter }: FilterProps) => {
   return (
     <>
       <label>
